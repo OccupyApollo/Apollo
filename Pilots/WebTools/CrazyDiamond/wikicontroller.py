@@ -53,7 +53,8 @@ class AssociationCriteria:
     """
 
     PageFirst = "PageFirst"
-    SharedFirst = "SharedFirst"
+    SharedLinksFirst = "SharedLinksFirst"
+    ReadArticleFirst = "ReadArticleFirst"
 
 
 class WikiController:
@@ -104,13 +105,13 @@ class WikiController:
 
         #Read all the links from the wikiText
         wikiReader = WikiTextReader()
-        links = wikiReader.readLinks(articleContent)
+        links = wikiReader.readLinks(articleTitle,articleContent)
 
         #Select the ranking algorithm and run it in the all links that are retrieved
         selectionAlg = getattr(self, "_selectLinks_%s" % selectionAlgorithm)
         return selectionAlg(links, outputLimit)
 
-    def findAssociations(self, articles, criteria=AssociationCriteria.SharedFirst):
+    def findAssociations(self, articles, criteria=AssociationCriteria.SharedLinksFirst):
         """ Finds association between a list of articles
 
 
@@ -133,7 +134,43 @@ class WikiController:
         findAssociationAlg = getattr(self,"_findAssociation_%s" % criteria)
         return findAssociationAlg(articles)
 
-    def _findAssociation_SharedFirst(self, articles, rankLimit=7):
+    def _findSharedLinks(self,allLinksMultiSet,articles,rankLimit):
+
+        #Find the intersection of all the multi sets for all the articles
+        mainArticleTitle = articles.pop()
+        mainSet = allLinksMultiSet[mainArticleTitle]
+        for articleTitle in articles:
+            mainSet = mainSet & allLinksMultiSet[articleTitle]
+        sharedLinks = list(mainSet.elements())
+
+        #If more than rankLimit items are found. Use PageRank to find the top rankLimit Items
+        if len(sharedLinks) > rankLimit:
+            interimLinks = [(link,self._calculatePageRankLinkWeight(link)) for link in sharedLinks]
+            sortedLinks = sorted(interimLinks, key= lambda item:item[1])
+            length = len(sortedLinks)
+            sharedLinks = [link for (link,freq) in sortedLinks[ length-rankLimit - 1: length]]
+
+        return sharedLinks
+    def _findAssociation_ReadArticleFirst(self,articles,rankLimit =7):
+
+        self.wiki = Wiki()
+        allLinksMultiSet = {}
+
+        wikiReader = WikiTextReader()
+
+
+        for articleTitle in articles:
+            content = self.wiki.getArticle(articleTitle)
+            links = wikiReader.readLinks(articleTitle,content,0,0,100000)
+            onlyLinks = [link for (link,freq) in links]
+            allLinksMultiSet[articleTitle] = collections.Counter(onlyLinks)
+
+        return self._findSharedLinks(allLinksMultiSet,articles,rankLimit)
+
+
+
+
+    def _findAssociation_SharedLinksFirst(self, articles, rankLimit=7):
         """ The algorithm for finding soft associations between a list of articles
 
         Input Parameters:
@@ -153,21 +190,7 @@ class WikiController:
         for articleTitle in articles:
             allLinksMultiSet[articleTitle] = collections.Counter(self.wiki.getLinks(articleTitle))
 
-        #Find the intersection of all the multi sets for all the articles
-        mainArticleTitle = articles.pop()
-        mainSet = allLinksMultiSet[mainArticleTitle]
-        for articleTitle in articles:
-            mainSet = mainSet & allLinksMultiSet[articleTitle]
-        sharedLinks = list(mainSet.elements())
-
-        #If more than rankLimit items are found. Use PageRank to find the top rankLimit Items
-        if len(sharedLinks) > rankLimit:
-            interimLinks = [(link,self._calculatePageRankLinkWeight(link)) for link in sharedLinks]
-            sortedLinks = sorted(interimLinks, key= lambda item:item[1])
-            length = len(sortedLinks)
-            sharedLinks = [link for (link,freq) in sortedLinks[ length-rankLimit - 1: length]]
-
-        return sharedLinks
+        return self._findSharedLinks(allLinksMultiSet,articles,rankLimit)
 
     def _selectLinks_PageRank(self, links, rankLimit):
         """
@@ -279,13 +302,14 @@ class WikiController:
 
 
 if __name__ == "__main__":
-    articleName = "Semantic Web"
+
+    articleName = "Steve Jobs"
     controller = WikiController()
 
     print "\n".join(controller.getImportantLinks(articleName))
-    articles = {"Steve Jobs","God"}
-    articles = {"Python (programming language)","Java (programming language)","iPhone"}
-    print controller.findAssociations(articles)
+    #articles = {"Steve Jobs","God"}
+   #articles = {"Python (programming language)","Java (programming language)"}
+#    print controller.findAssociations(articles,AssociationCriteria.ReadArticleFirst)
 
 
 

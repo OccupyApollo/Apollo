@@ -12,6 +12,7 @@ WikiTextReader: Reads wikiText an can return various textual attributes of the w
 __author__ = 'Ali Fathalian'
 
 import re
+from wikiadapter import Wiki
 
 
 class WikiTextReader(object):
@@ -37,10 +38,13 @@ class WikiTextReader(object):
 
     # The pattern to find links based on
     _linkPattern = re.compile('\[\[(.+?)\]\]')
+    _ReferencePattern = '==\s*References\s*=='
+    _notesPattern = '==\s*Notes\s*=='
     _FIRST_SCAN_LIMIT = 1
     _SECOND_SCAN_LIMIT = 2
     _MIN_LINKS_LIMIT = 7
     _MAX_LINKS_LIMIT = 30
+    _DOUBLE_LINK_MULTIPLIER = 3
 
     def _searchContent(self, linkTitle, freq, aliases, content):
         """
@@ -73,7 +77,8 @@ class WikiTextReader(object):
                 freq += content.count(alias)
         return freq
 
-    def _selectImportantLinks_Freq(self, interimLinks, aliases, content):
+    def _selectImportantLinks_Freq(self, mainArticleName, interimLinks, aliases, content, secondScanLimit = _SECOND_SCAN_LIMIT,
+                                   maxLinkLimit = _MAX_LINKS_LIMIT):
         """
         This class selects the most important links based on the frequency of them or their aliases appearing in the
         text. The output of this function should be bounded and be no more than __MAX_LINKS_LIMIT. This is accomplished by
@@ -96,20 +101,27 @@ class WikiTextReader(object):
 
         #Search the content for the link or its aliases and get the total number of frequencies for each link.
         finalLinks = []
+        wiki = Wiki()
         for (topLink, freq) in interimLinks:
             newFreq = self._searchContent(topLink, freq, aliases, content)
+            isDoubleLink = wiki.doesPageContainLink(mainArticleName,topLink)
+            #TODO remove this later
+            print isDoubleLink
+            if isDoubleLink:
+                newFreq *= self._DOUBLE_LINK_MULTIPLIER
             finalLinks.append((topLink, newFreq))
 
         #Here we have a large number of links and frequencies. We go through them to just select no more than
         # __MAX_LINKS_LIMIT. Start from __SECOND_SCAN_LIMIT and in each step make the threshold of acceptable frequencies
         #tighter until the number of links is smaller than __MAX_LINKS_LIMIT .
         step = 0
-        while  len(finalLinks) >= self._MAX_LINKS_LIMIT:
-            finalLinks = [(link, freq) for (link, freq) in finalLinks if freq > self._SECOND_SCAN_LIMIT + step]
+        while  len(finalLinks) >= maxLinkLimit:
+            finalLinks = [(link, freq) for (link, freq) in finalLinks if freq > secondScanLimit + step]
             step += 1
         return finalLinks
 
-    def readLinks(self, content):
+    def readLinks(self, articleName, content,firstScanLimit = _FIRST_SCAN_LIMIT, secondScanLimit = _SECOND_SCAN_LIMIT,
+                  maxLinkLimit = _MAX_LINKS_LIMIT):
         """Reads and selects the most important links in the article based on the bag of words algorithm
 
 
@@ -129,6 +141,20 @@ class WikiTextReader(object):
         #Use regular expression to find all the text that appear inside [[ ]]. These are our links
         dirtyLinks = self._linkPattern.findall(content)
 
+        matchObject1 = re.search(self._ReferencePattern,content)
+        if matchObject1:
+            start1 = matchObject1.start()
+            finalStart = start1
+            matchObject2 = re.search(self._notesPattern,content)
+            if matchObject2:
+                start2 = matchObject2.start()
+                if start2 < start1:
+                    finalStart = start2
+            content = content[:finalStart]
+
+
+
+
         #Go through the results one by one. If the link contains ':' it means it is related to a superpage and should
         #not be considered. Links that have '|' in them have aliases. For these links separate the link name and it alias
         #and store the alias with the name key in a map. Finally, if the phrase that you are looking at has been encountered
@@ -147,17 +173,18 @@ class WikiTextReader(object):
                     if len(stringItems) > 1:
                         aliases[key] = stringItems[1]
         #Links that appear only once in the text should be filtered out.
-        interimLinks = [ (topLink, freq) for (topLink, freq) in cleanLinks.items() if freq > self._FIRST_SCAN_LIMIT]
+        interimLinks = [ (topLink, freq) for (topLink, freq) in cleanLinks.items() if freq > firstScanLimit]
 
         #For the remaining links adjustments must be made so that we get the most important links and the result should
         #be returned.
-        return self._selectImportantLinks_Freq(interimLinks, aliases, content)
+        return self._selectImportantLinks_Freq(articleName, interimLinks, aliases, content, secondScanLimit, maxLinkLimit)
 
 
 if __name__ == "__main__":
     from wikiadapter import Wiki
     wiki = Wiki()
-    content = wiki.getArticle("Shine On You Crazy Diamond")
+    articleName = "Shine On You Crazy Diamond"
+    content = wiki.getArticle(articleName)
     reader = WikiTextReader()
-    print len(reader.readLinks(content))
-    print ["%s=%s" % (link, freq) for (link, freq) in reader.readLinks(content)]
+    print len(reader.readLinks(articleName,content))
+    print ["%s=%s" % (link, freq) for (link, freq) in reader.readLinks(articleName,content)]

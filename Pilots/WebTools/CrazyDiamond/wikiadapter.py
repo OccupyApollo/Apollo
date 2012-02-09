@@ -55,6 +55,8 @@ class Wiki(object):
     _backLinksURL = "http://%s.wikipedia.org/w/api.php?action=query&list=backlinks&" \
                      "format=xml&bltitle=%s&blnamespace=0&bllimit=100&redirects"
 
+    _LinkExists = "http://%s.wikipedia.org/w/api.php?action=query&prop=links&format=xml&pllimit=100&pltitles=%s&titles=%s"
+
     #This determines how many items in hundred should be counted for backlinks. For example value 9 means count 1000 items
     #at most.
     _CONTINUE_LIMIT = 9
@@ -146,7 +148,9 @@ class Wiki(object):
         if isContinue:
             baseLink += "&blcontinue=" + quote(blContinue)
         return baseLink
-
+    def _buildCheckLinkURL(self,linkToLookFor,pageToSearchTheLinkIn):
+        link = self._LinkExists % (self.lang, quote(linkToLookFor), quote(pageToSearchTheLinkIn))
+        return link
     def _sendRequest(self, requestURL):
         """
         An standard HTTP request to wikipedia api with the requestURL passed in.
@@ -282,6 +286,15 @@ class Wiki(object):
         content = self._sendRequest(requestURL)
         return content
 
+    def doesPageContainLink(self, linkName, pageName):
+        requestURL = self._buildCheckLinkURL(linkName, pageName)
+        content = self._sendRequest(requestURL)
+        itemName = 'pl'
+        xmlFile = minidom.parseString(content)
+        if xmlFile.getElementsByTagName(itemName):
+            return True
+        return False
+
     def getLinks(self, articleTitle):
         """Retrieves a list of all the most important links that appear in an article
 
@@ -333,6 +346,8 @@ if __name__ == "__main__":
     wiki = Wiki()
     print "Printing a test Article : \n"
     testArticle = "Seattle"
+    testPageTrue = "Boeing"
+    testPageFales = "Steve Jobs"
     print wiki.getArticle(testArticle)
     print "Printing all the links in the article : \n"
     links = wiki.getLinks(testArticle)
@@ -342,6 +357,9 @@ if __name__ == "__main__":
     links = wiki.getBackLinks(testArticle)
     print str(len(links)) + " Links Found \n"
     print "\n".join(links)
+    print "printing doesArticleExist"
+    print wiki.doesPageContainLink(testArticle,testPageTrue)
+    print wiki.doesPageContainLink(testArticle,testPageFales)
 
 
 
