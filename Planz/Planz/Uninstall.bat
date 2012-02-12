@@ -1,0 +1,1 @@
+%windir%\system32\msiexec.exe -I{F1DE46C4-A809-4144-AE64-35CFBFC31747}

@@ -1,0 +1,239 @@
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/svn/!svn/ver/2/trunk/Planz/Planz
+END
+JournalControl.cs
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/2/trunk/Planz/Planz/JournalControl.cs
+END
+App.xaml
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/2/trunk/Planz/Planz/App.xaml
+END
+FileTypeHandler.cs
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/2/trunk/Planz/Planz/FileTypeHandler.cs
+END
+OptionsWindow.xaml
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/2/trunk/Planz/Planz/OptionsWindow.xaml
+END
+app.config
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/2/trunk/Planz/Planz/app.config
+END
+App.xaml.cs
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/2/trunk/Planz/Planz/App.xaml.cs
+END
+CreateJournalWindow.xaml
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/2/trunk/Planz/Planz/CreateJournalWindow.xaml
+END
+ImageControl.cs
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/2/trunk/Planz/Planz/ImageControl.cs
+END
+CreateJournalWindow.xaml.cs
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/2/trunk/Planz/Planz/CreateJournalWindow.xaml.cs
+END
+TwitterWindow.xaml
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/2/trunk/Planz/Planz/TwitterWindow.xaml
+END
+Element.cs
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/2/trunk/Planz/Planz/Element.cs
+END
+TwitterWindow.xaml.cs
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/2/trunk/Planz/Planz/TwitterWindow.xaml.cs
+END
+ElementControl.cs
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/2/trunk/Planz/Planz/ElementControl.cs
+END
+FlagWindow.xaml
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/2/trunk/Planz/Planz/FlagWindow.xaml
+END
+DatePickerWindow.xaml
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/2/trunk/Planz/Planz/DatePickerWindow.xaml
+END
+ActiveWindowHandler.cs
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/2/trunk/Planz/Planz/ActiveWindowHandler.cs
+END
+SupportClass.cs
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/2/trunk/Planz/Planz/SupportClass.cs
+END
+TwitterControl.cs
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/2/trunk/Planz/Planz/TwitterControl.cs
+END
+CheckWindow.xaml.cs
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/2/trunk/Planz/Planz/CheckWindow.xaml.cs
+END
+DatabaseControl.cs
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/2/trunk/Planz/Planz/DatabaseControl.cs
+END
+MainWindow.xaml
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/2/trunk/Planz/Planz/MainWindow.xaml
+END
+CompatibilityControl.cs
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/2/trunk/Planz/Planz/CompatibilityControl.cs
+END
+MainWindow.xaml.cs
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/2/trunk/Planz/Planz/MainWindow.xaml.cs
+END
+NavigationItem.cs
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/2/trunk/Planz/Planz/NavigationItem.cs
+END
+Planz.csproj
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/2/trunk/Planz/Planz/Planz.csproj
+END
+Log.cs
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/2/trunk/Planz/Planz/Log.cs
+END
+OptionsWindow.xaml.cs
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/2/trunk/Planz/Planz/OptionsWindow.xaml.cs
+END
+DeleteWindow.xaml
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/2/trunk/Planz/Planz/DeleteWindow.xaml
+END
+EnumDictionary.cs
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/2/trunk/Planz/Planz/EnumDictionary.cs
+END
+DeleteWindow.xaml.cs
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/2/trunk/Planz/Planz/DeleteWindow.xaml.cs
+END
+StartProcess.cs
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/2/trunk/Planz/Planz/StartProcess.cs
+END
+AboutWindow.xaml
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/2/trunk/Planz/Planz/AboutWindow.xaml
+END
+CheckWindow.xaml
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/2/trunk/Planz/Planz/CheckWindow.xaml
+END
+FlagWindow.xaml.cs
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/2/trunk/Planz/Planz/FlagWindow.xaml.cs
+END
+AboutWindow.xaml.cs
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/2/trunk/Planz/Planz/AboutWindow.xaml.cs
+END
+DatePickerWindow.xaml.cs
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/2/trunk/Planz/Planz/DatePickerWindow.xaml.cs
+END
+FileNameWindow.xaml
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/2/trunk/Planz/Planz/FileNameWindow.xaml
+END
+FileNameWindow.xaml.cs
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/2/trunk/Planz/Planz/FileNameWindow.xaml.cs
+END
+Uninstall.bat
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/2/trunk/Planz/Planz/Uninstall.bat
+END

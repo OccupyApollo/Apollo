@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/2/trunk/Planz/Planz/QuickCapture
+END
+QuickCapture_ClassDiagram.cd
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/2/trunk/Planz/Planz/QuickCapture/QuickCapture_ClassDiagram.cd
+END
+QuickCapture.csproj
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/2/trunk/Planz/Planz/QuickCapture/QuickCapture.csproj
+END
+App.xaml
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/2/trunk/Planz/Planz/QuickCapture/App.xaml
+END
+SystemHotkeyLib.cs
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/2/trunk/Planz/Planz/QuickCapture/SystemHotkeyLib.cs
+END
+app.config
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/2/trunk/Planz/Planz/QuickCapture/app.config
+END
+App.xaml.cs
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/2/trunk/Planz/Planz/QuickCapture/App.xaml.cs
+END
+QuickCapture.suo
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/2/trunk/Planz/Planz/QuickCapture/QuickCapture.suo
+END
+GlobalKeyboardHook.cs
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/2/trunk/Planz/Planz/QuickCapture/GlobalKeyboardHook.cs
+END
+DatePickerWindow_QC.xaml
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/2/trunk/Planz/Planz/QuickCapture/DatePickerWindow_QC.xaml
+END
+QuickCaptureWindow.xaml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/2/trunk/Planz/Planz/QuickCapture/QuickCaptureWindow.xaml
+END
+DatePickerWindow_QC.xaml.cs
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/2/trunk/Planz/Planz/QuickCapture/DatePickerWindow_QC.xaml.cs
+END
+QuickCaptureWindow.xaml.cs
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/2/trunk/Planz/Planz/QuickCapture/QuickCaptureWindow.xaml.cs
+END
+GlobalTextSelHook.cs
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/2/trunk/Planz/Planz/QuickCapture/GlobalTextSelHook.cs
+END

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xooml:fragment xmlns:xooml="http://kftf.ischool.washington.edu/xmlns/xooml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://kftf.ischool.washington.edu/xmlns/xooml http://kftf.ischool.washington.edu/XMLschema/0.41/XooML.xsd" schemaVersion="0.41" itemAddress="" defaultApplication="" relatedItem="">
+  <xooml:fragmentToolAttributes xmlns="http://kftf.ischool.washington.edu/xmlns/planz" toolVersion="0.41" toolName="planz" startDate="" dueDate="" showAssociationMarkedDone="False" showAssociationMarkedDefer="False" />
+  <xooml:association ID="32b24fe1-45e3-4965-bfa0-38330dd6864a" associatedItem="Today+" associatedIcon="" associatedXooMLFragment="" levelOfSynchronization="1" displayText="Today+" openWithDefault="" createdBy="planz" createdOn="6/9/2010 11:14 AM" modifiedBy="" modifiedOn="6/9/2010 11:38 AM">
+    <xooml:associationToolAttributes xmlns="http://kftf.ischool.washington.edu/xmlns/planz" type="Heading" associatedItemType="Folder" isVisible="True" isCollapsed="False" status="Normal" powerDStatus="None" powerDTimeStamp="6/9/2010 11:14 AM" fontColor="DarkBlue" flagStatus="Normal" />
+  </xooml:association>
+  <xooml:association ID="9ebe1229-e0f4-4400-b6be-7566da1a2730" associatedItem="My first project" associatedIcon="" associatedXooMLFragment="" levelOfSynchronization="1" displayText="My first project" openWithDefault="" createdBy="planz" createdOn="6/9/2010 11:14 AM" modifiedBy="" modifiedOn="6/9/2010 11:19 AM">
+    <xooml:associationToolAttributes xmlns="http://kftf.ischool.washington.edu/xmlns/planz" type="Heading" associatedItemType="Folder" isVisible="True" isCollapsed="False" status="Normal" powerDStatus="None" powerDTimeStamp="6/9/2010 11:14 AM" fontColor="DarkBlue" flagStatus="Normal" />
+  </xooml:association>
+  <xooml:association ID="4a426d84-978e-48b7-ac4a-d5496f8dd6cb" associatedItem="Planner User Manual.lnk" associatedIcon="" associatedXooMLFragment="" levelOfSynchronization="0" displayText="Click the icon to the right to see the Planz user manual." openWithDefault="" createdBy="planz" createdOn="6/9/2010 11:36 AM" modifiedBy="" modifiedOn="6/9/2010 12:12 PM">
+    <xooml:associationToolAttributes xmlns="http://kftf.ischool.washington.edu/xmlns/planz" type="Note" associatedItemType="Web" isVisible="True" isCollapsed="True" status="Normal" powerDStatus="None" powerDTimeStamp="6/9/2010 11:36 AM" fontColor="Black" flagStatus="Normal" />
+  </xooml:association>
+</xooml:fragment>
