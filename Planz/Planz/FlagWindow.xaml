@@ -1,0 +1,58 @@
+﻿<!--
+*
+* DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+* 
+* Copyright (c) 2010 by the Keeping Found Things Found group, 
+*                       the Information School, University of Washington
+*
+* Planz - Bring it together: Capture, Connect, … Complete!
+*
+* This file is part of Planz
+*
+* Planz is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 3
+* only, as published by the Free Software Foundation.
+*
+* Planz is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License version 3 for more details
+* (a copy is included in the LICENSE file that accompanied this code).
+*
+* You should have received a copy of the GNU General Public License
+* version 3 along with Planz.  If not, see http://www.gnu.org/licenses/gpl.html
+* for a copy of the GPLv3 License.
+*
+-->
+
+<Window x:Class="Planz.FlagWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/wpf/2008/toolkit"
+    Title="Flag as Task To Do" Height="250" Width="480" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <Label FontSize="12" Margin="10, 0, 0, 0">Flag the following heading as task to do:</Label>
+            <TextBox Name="headingName" BorderThickness="0" IsReadOnly="True" Text="headingName" FontSize="12" Foreground="Blue" HorizontalAlignment="Center" Margin="0, 0, 0, 10"/>
+            <StackPanel Orientation="Horizontal">
+                <CheckBox Name="start" Content="Start:" FontSize="12" Margin="10, 5, 10, 0" Checked="start_Checked" Unchecked="start_Unchecked" />
+                <toolkit:DatePicker Name="startDatePicker" SelectedDateChanged="startDatePicker_SelectedDateChanged" Margin="0, 0, 5, 0" />
+                <ComboBox Name="startTimePicker" FontSize="12" Margin="0, 0, 5, 0" />
+                <CheckBox Name="startAllDay" Margin="0, 5, 0, 0" Content="All day event" FontSize="12" Checked="startAllDay_Checked" Unchecked="startAllDay_Unchecked" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <CheckBox Name="due" Content="Due: " FontSize="12" Margin="10, 5, 10, 0" Checked="due_Checked" Unchecked="due_Unchecked"/>
+                <toolkit:DatePicker Name="dueDatePicker" SelectedDateChanged="dueDatePicker_SelectedDateChanged" Margin="0, 0, 5, 0" />
+                <ComboBox Name="dueTimePicker" FontSize="12" Margin="0, 0, 5, 0" />
+                <CheckBox Name="dueAllDay" Margin="0, 5, 0, 0" Content="All day event" FontSize="12" Checked="dueAllDay_Checked" Unchecked="dueAllDay_Unchecked" />
+            </StackPanel>
+            <CheckBox Name="addToToday" Content="Add heading shortcut to &quot;Today+&quot;" FontSize="12" Margin="10, 10, 0, 0" Checked="addToToday_Checked" Unchecked="addToToday_Unchecked" />
+            <CheckBox Name="addReminder" Content="Add calendar reminders in Outlook" FontSize="12" Margin="10, 0, 0, 0" Checked="addReminder_Checked" Unchecked="addReminder_Unchecked" />
+            <CheckBox Name="addTask" Content="Add task in Outlook" FontSize="12" Margin="10, 0, 0, 10" Checked="addTask_Checked" Unchecked="addTask_Unchecked" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Name="ok" IsDefault="True" Content="OK" FontSize="15" Width="60" Margin="0, 0, 5, 0" Click="OK_Click" />
+                <Button Name="cancel" IsCancel="True" Content="Cancel" FontSize="15" Width="60" Margin="0, 0, 5, 0" Click="Cancel_Click" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

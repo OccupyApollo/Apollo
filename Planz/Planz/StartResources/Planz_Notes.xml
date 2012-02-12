@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xooml:fragment xsi:schemaLocation="http://kftf.ischool.washington.edu/xmlns/xooml http://kftf.ischool.washington.edu/XMLschema/0.41/XooML.xsd" schemaVersion="0.41" defaultApplication="" relatedItem="C:\Users\Sheng Bi\Projects\ee9d38b9-6f6f-4bbe-8f5b-e6515a992a73\" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xooml="http://kftf.ischool.washington.edu/xmlns/xooml">
+  <xooml:fragmentToolAttributes xmlns="http://kftf.ischool.washington.edu/xmlns/planz" toolVersion="1.0.7" toolName="Planz" startDate="1/1/0001 12:00 AM" dueDate="1/1/0001 12:00 AM" showAssociationMarkedDone="False" showAssociationMarkedDefer="False" />
+  <xooml:association ID="5a46bfb3-923b-4af9-ad79-c1158d817b20" associatedItem="" associatedIcon="" associatedXooMLFragment="" levelOfSynchronization="0" displayText="Use &quot;Notes&quot; as a holding area for your thoughts and to-dos. Use &quot;Review&quot; tab commands to organize these notes later." openWithDefault="" createdBy="planz" createdOn="6/9/2010 11:33 AM" modifiedBy="" modifiedOn="6/9/2010 11:40 AM">
+    <xooml:associationToolAttributes xmlns="http://kftf.ischool.washington.edu/xmlns/planz" type="Note" associatedItemType="None" isVisible="True" isCollapsed="True" status="Normal" powerDStatus="None" powerDTimeStamp="6/9/2010 11:33 AM" fontColor="Black" flagStatus="Normal" />
+  </xooml:association>
+</xooml:fragment>

@@ -1,0 +1,72 @@
+﻿<!--
+*
+* DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+* 
+* Copyright (c) 2010 by the Keeping Found Things Found group, 
+*                       the Information School, University of Washington
+*
+* Planz - Bring it together: Capture, Connect, … Complete!
+*
+* This file is part of Planz
+*
+* Planz is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 3
+* only, as published by the Free Software Foundation.
+*
+* Planz is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License version 3 for more details
+* (a copy is included in the LICENSE file that accompanied this code).
+*
+* You should have received a copy of the GNU General Public License
+* version 3 along with Planz.  If not, see http://www.gnu.org/licenses/gpl.html
+* for a copy of the GPLv3 License.
+*
+-->
+
+<Window x:Class="Planz.OptionsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Options" Height="200" Width="300" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <TabControl Height="120" Margin="5, 5, 5, 5">
+                <TabItem Header="Font &amp; Size" >
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Heading" Width="60" />
+                            <ComboBox x:Name="HeadingLevel1FontFamily" 
+                                      Width="100" IsEditable="True" IsReadOnly="True" 
+                                      VirtualizingStackPanel.IsVirtualizing="True" 
+                                      Margin="0, 0, 5, 0" 
+                                      SelectionChanged="HeadingLevel1FontFamily_SelectionChanged" />
+                            <ComboBox x:Name="HeadingLevel1FontSize" 
+                                      Width="50" IsEditable="True" IsReadOnly="True" 
+                                      VirtualizingStackPanel.IsVirtualizing="True" 
+                                      Margin="0, 0, 5, 0" 
+                                      SelectionChanged="HeadingLevel1FontSize_SelectionChanged" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Note" Width="60" />
+                            <ComboBox x:Name="NoteFontFamily" 
+                                      Width="100" IsEditable="True" IsReadOnly="True" 
+                                      VirtualizingStackPanel.IsVirtualizing="True" 
+                                      Margin="0, 0, 5, 0" 
+                                      SelectionChanged="NoteFontFamily_SelectionChanged" />
+                            <ComboBox x:Name="NoteFontSize" 
+                                      Width="50" IsEditable="True" IsReadOnly="True" 
+                                      VirtualizingStackPanel.IsVirtualizing="True" 
+                                      Margin="0, 0, 5, 0" 
+                                      SelectionChanged="NoteFontSize_SelectionChanged" />
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+            <StackPanel Orientation="Horizontal" Margin="0, 0, 10, 0" HorizontalAlignment="Right" >
+                <Button x:Name="OK" Content="OK" Width="60" Height="25" Margin="0, 0, 5, 0" Click="OK_Click" IsDefault="True" />
+                <Button x:Name="Cancel" Content="Cancel" Width="60" Height="25" Click="Cancel_Click" IsCancel="True" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

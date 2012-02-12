@@ -1,0 +1,788 @@
+﻿<!--
+*
+* DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+* 
+* Copyright (c) 2010 by the Keeping Found Things Found group, 
+*                       the Information School, University of Washington
+*
+* Planz - Bring it together: Capture, Connect, … Complete!
+*
+* This file is part of Planz
+*
+* Planz is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 3
+* only, as published by the Free Software Foundation.
+*
+* Planz is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License version 3 for more details
+* (a copy is included in the LICENSE file that accompanied this code).
+*
+* You should have received a copy of the GNU General Public License
+* version 3 along with Planz.  If not, see http://www.gnu.org/licenses/gpl.html
+* for a copy of the GPLv3 License.
+*
+-->
+
+<Window x:Class="Planz.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Planz"
+    xmlns:p="clr-namespace:Planz.Properties"
+    xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
+    xmlns:splitbutton="clr-namespace:Wpf.Controls;assembly=Wpf.SplitButton"
+    xmlns:toolkit="http://schemas.microsoft.com/wpf/2008/toolkit"
+    Name="PlanzMainWindow"
+    Title="Planz" 
+    Height="{Binding Source={x:Static p:Settings.Default}, Path=WindowHeight, Mode=TwoWay}" 
+    Width="{Binding Source={x:Static p:Settings.Default}, Path=WindowWidth, Mode=TwoWay}" 
+    Icon="/Planz;component/Images/Planz.ico"
+    Closed="Window_Closed"
+    Loaded="Window_Loaded"
+    Activated="Window_Activated"
+    SizeChanged="Window_SizeChanged" >
+    
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <!-- DataTemplate for Element -->
+        <HierarchicalDataTemplate x:Key="ElementStructure" ItemsSource="{Binding Elements}">
+            <StackPanel Orientation="Horizontal" AllowDrop="True"
+                        MouseEnter="ElementStackPanel_MouseEnter"
+                        MouseLeave="ElementStackPanel_MouseLeave"
+                        PreviewDragEnter="ElementStackPanel_PreviewDragEnter"
+                        PreviewDragOver="ElementStackPanel_PreviewDragEnter"
+                        PreviewDrop="ElementStackPanel_PreviewDrop"
+                        Visibility="{Binding Path=IsVisible, Mode=TwoWay}">
+                <Image x:Name="HeadImage" Width="20" Height="20" Margin="-25,0,0,0"
+                       Visibility="{Binding Path=IsNote, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                       MouseEnter="HeadImage_MouseEnter"
+                       MouseLeave="HeadImage_MouseLeave"
+                       MouseLeftButtonDown="HeadImage_MouseLeftButtonDown"
+                       MouseRightButtonDown="HeadImage_MouseRightButtonDown"
+                       PreviewMouseLeftButtonDown="HeadImage_PreviewMouseLeftButtonDown"
+                       MouseMove="HeadImage_MouseMove"
+                       Source="{Binding Path=HeadImageSource, Mode=TwoWay}" >
+                </Image>
+                <Image x:Name="FlagImage" Width="12" Height="20" Margin="0,0,-5,0"
+                       Visibility="{Binding Path=ShowFlag, Mode=TwoWay}"
+                       MouseDown="FlagImage_MouseDown"
+                       MouseEnter="FlagImage_MouseEnter"
+                       Source="{Binding Path=FlagImageSource, Mode=TwoWay}" />
+                <TextBox x:Name="ElementTextBox"
+                         AllowDrop="True" UndoLimit="10" TextWrapping="Wrap" AutoWordSelection="True"
+                         Width="Auto" MinHeight="10" BorderThickness="1" BorderBrush="White" Margin="10, 0, 5, 0" 
+                         Text="{Binding Path=NoteText, Mode=TwoWay}"
+                         Foreground="{Binding Path=FontColor, Mode=TwoWay}"
+                         Tag="{Binding Path=ID}"
+                         FontFamily="{Binding Path=FontFamily}"
+                         FontSize="{Binding Path=FontSize}"
+                         SpellCheck.IsEnabled="{Binding Source={x:Static p:Settings.Default}, Path=IsSpellCheckEnabled, Mode=TwoWay}"
+                         TextChanged="ElementTextBox_TextChanged"
+                         PreviewKeyDown="ElementTextBox_PreviewKeyDown"
+                         KeyDown="ElementTextBox_KeyDown"
+                         PreviewMouseDown="ElementTextBox_PreviewMouseDown"
+                         LostFocus="ElementTextBox_LostFocus"
+                         GotFocus="ElementTextBox_GotFocus"
+                         Loaded="ElementTextBox_Loaded" >
+                    <TextBox.ContextMenu>
+                        <ContextMenu Opened="ElementTextBox_ContextMenu_Opened" Closed="ElementTextBox_ContextMenu_Closed">
+                            <MenuItem Header="Explore" Click="ElementTextBox_ContextMenuItem_Explore"  />
+                            <Separator Visibility="{Binding Path=CanImportCalendar, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            <MenuItem Header="Import Outlook Calendar" Visibility="{Binding Path=CanImportCalendar, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}" Click="ElementTextBox_ContextMenuItem_Import"  />
+                            <MenuItem Header="Label with ..." Visibility="{Binding Path=IsHeading, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}" Click="ElementTextBox_ContextMenuItem_LabelWith"  />
+                            <Separator />
+                            <MenuItem Header="Copy Text" Command="ApplicationCommands.Copy" />
+                            <MenuItem Header="Cut Text" Command="ApplicationCommands.Cut" />
+                            <MenuItem Header="Paste Text" Command="ApplicationCommands.Paste" />
+                            <Separator />
+                            <MenuItem Header="Insert" >
+                                <MenuItem Header="Heading" Click="ElementTextBox_ContextMenuItem_NewHeading"  >
+                                    <MenuItem.Icon>
+                                        <Image Source="Images/heading.png" Width="18" Height="18" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Note" Click="ElementTextBox_ContextMenuItem_NewNote" >
+                                    <MenuItem.Icon>
+                                        <Image Source="Images/note.png" Width="18" Height="18" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator />
+                                <MenuItem Header="Text Document" Click="ElementTextBox_ContextMenuItem_NewTextDocument" >
+                                    <MenuItem.Icon>
+                                        <Image Source="Images/notepad.png" Width="18" Height="18" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Word Document" Click="ElementTextBox_ContextMenuItem_NewWord" >
+                                    <MenuItem.Icon>
+                                        <Image Source="Images/word.png" Width="18" Height="18" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Excel Spreadsheet" Click="ElementTextBox_ContextMenuItem_NewExcel" >
+                                    <MenuItem.Icon>
+                                        <Image Source="Images/excel.png" Width="18" Height="18" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="PowerPoint Presentation" Click="ElementTextBox_ContextMenuItem_NewPowerPoint" >
+                                    <MenuItem.Icon>
+                                        <Image Source="Images/ppt.png" Width="18" Height="18" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="OneNote Section" Click="ElementTextBox_ContextMenuItem_NewOneNote" >
+                                    <MenuItem.Icon>
+                                        <Image Source="Images/onenote.png" Width="18" Height="18" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Outlook Email" Click="ElementTextBox_ContextMenuItem_NewEmail" >
+                                    <MenuItem.Icon>
+                                        <Image Source="Images/outlook.png" Width="18" Height="18" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Twitter Update" Click="ElementTextBox_ContextMenuItem_NewTwitter" >
+                                    <MenuItem.Icon>
+                                        <Image Source="Images/twitter.png" Width="18" Height="18" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                            <MenuItem Header="Link" x:Name="ElementTextBox_ContextMenuItem_Link" MouseEnter="ElementTextBox_ContextMenuItem_Link_MouseEnter" >
+                                <MenuItem Header="File..." Click="ElementTextBox_ContextMenuItem_LinkToFile"  >
+                                    <MenuItem.Icon>
+                                        <Image Source="Images/file.png" Width="18" Height="18" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Folder..." Click="ElementTextBox_ContextMenuItem_LinkToFolder" >
+                                    <MenuItem.Icon>
+                                        <Image Source="Images/folder.png" Width="18" Height="18" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                            <!--<Separator />
+                            <MenuItem Header="Delete" Click="ElementTextBox_ContextMenuItem_Delete" />-->
+                        </ContextMenu>
+                    </TextBox.ContextMenu>
+                </TextBox>
+                <!--<Image x:Name="TailImage" Stretch="Uniform" SnapsToDevicePixels="True" 
+                       Width="{Binding Path=TailImageWith}" Height="{Binding Path=TailImageHeight}" 
+                       Source="{Binding Path=TailImageSource, Mode=TwoWay}"
+                       MouseEnter="TailImage_MouseEnter"
+                       MouseLeave="TailImage_MouseLeave"
+                       MouseLeftButtonUp="TailImage_MouseLeftButtonDown" />-->
+                <splitbutton:SplitButton x:Name="AssociationSplitButton" BorderThickness="0" Background="White" BorderBrush="White"
+                                         Visibility="{Binding Path=HasAssociation, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                                         Click="AssociationDropDownMenu_Click">
+                    <splitbutton:SplitButton.Content>
+                        <Image x:Name="TailImage" Stretch="Uniform" SnapsToDevicePixels="True" 
+                               Width="{Binding Path=TailImageWith, Mode=TwoWay}" Height="{Binding Path=TailImageHeight, Mode=TwoWay}" 
+                               Source="{Binding Path=TailImageSource, Mode=TwoWay}"
+                               MouseEnter="TailImage_MouseEnter"
+                               MouseLeave="TailImage_MouseLeave" />
+                    </splitbutton:SplitButton.Content>
+                    <!--<MenuItem Header="Related Messages" Tag="{Binding Path=ID}" Visibility="{Binding Path=HasEmailAssociation, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}" Click="AssociationDropDownMenu_RelatedMessgages"/> -->
+                    <MenuItem Header="Open" Tag="{Binding Path=ID}" Visibility="{Binding Path=CanOpen, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}" Click="AssociationDropDownMenu_Open"/>
+                    <MenuItem Header="Explore" Tag="{Binding Path=ID}" Visibility="{Binding Path=CanExplore, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}" Click="AssociationDropDownMenu_Explore"/>
+                    <MenuItem Header="Rename" Tag="{Binding Path=ID}" Visibility="{Binding Path=CanRename, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}" Click="AssociationDropDownMenu_Rename"/>
+                    <MenuItem Header="New Version" Tag="{Binding Path=ID}" Visibility="{Binding Path=CanCreateNewVersion, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}" Click="AssociationDropDownMenu_NewVersion"/>
+                    <MenuItem Header="Delete" Tag="{Binding Path=ID}" Visibility="{Binding Path=CanDelete, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}" Click="AssociationDropDownMenu_Delete"/>
+                    <MenuItem Header="Reply to all" Tag="{Binding Path=ID}" Visibility="{Binding Path=HasEmailAssociation, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}" Click="AssociationDropDownMenu_Reply"/>
+                    <MenuItem Header="Import Outlook Calendar" Tag="{Binding Path=ID}" Visibility="{Binding Path=CanImportCalendar, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}" Click="AssociationDropDownMenu_Import"/>
+                    <MenuItem Header="Label with ..." Tag="{Binding Path=ID}" Visibility="{Binding Path=IsHeading, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}" Click="AssociationDropDownMenu_LabelWith"/>
+                    <MenuItem Header="Execute" Tag="{Binding Path=ID}" Visibility="{Binding Path=CanExecute, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}" Click="AssociationDropDownMenu_Execute"/>
+                </splitbutton:SplitButton>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+        
+        <!-- Template for TreeViewItem in Plan -->
+        <Style x:Key="styleTreeViewExpandCollapse" TargetType="{x:Type ToggleButton}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Image x:Name="expandCollapseImage" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" Source="Images/tool_expand.png" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter TargetName="expandCollapseImage" Property="Source" Value="Images/tool_collapse.png" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="styleTreeViewItem1" TargetType="TreeViewItem">
+            <Setter Property="IsExpanded" Value="{Binding Path=IsExpanded, Mode=TwoWay}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition MinWidth="24" Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <ToggleButton x:Name="Expander" Grid.Column="0" Style="{StaticResource styleTreeViewExpandCollapse}" ClickMode="Press" Width="12" Height="12" 
+                                          Tag="{Binding Path=ID}" 
+                                          Visibility="{Binding Path=ShowExpander, Mode=TwoWay}"
+                                          IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                          MouseEnter="Expander_MouseEnter"
+                                          MouseRightButtonDown="Expander_MouseRightButtonDown">
+                            </ToggleButton>
+                            <ContentPresenter x:Name="PART_Header" Grid.Column="1" ContentSource="Header" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                            <ItemsPresenter x:Name="ItemsHost" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="false">
+                                <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                            <!--<Trigger Property="HasItems" Value="false">
+                                <Setter TargetName="Expander" Property="Visibility" Value="{Binding Path=IsHeading, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            </Trigger>-->
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="HasHeader" Value="false"/>
+                                    <Condition Property="Width" Value="Auto"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="PART_Header" Property="MinWidth" Value="75"/>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="HasHeader" Value="false"/>
+                                    <Condition Property="Height" Value="Auto"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="PART_Header" Property="MinHeight" Value="20"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- DataTemplate for NavigationItem -->
+        <HierarchicalDataTemplate x:Key="NavigationTreeViewItem" ItemsSource="{Binding Items}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="NavigationTextBlock"
+                           Text="{Binding Path=Name, Mode=TwoWay}"
+                           Tag="{Binding}"
+                           MouseLeftButtonDown="NavigationTextBlock_MouseDown"/>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+        
+        <!-- Template for TreeViewItem in Navigation Window -->
+        <Style x:Key="styleTreeViewItem2" TargetType="TreeViewItem">
+
+        </Style>
+
+    </Window.Resources>
+    
+    <Grid x:Name="LayoutRoot">
+        <DockPanel>
+            
+            <!-- Ribbon -->
+            <ribbon:Ribbon x:Name="RibbonMenu" DockPanel.Dock="Top" IsTabStop="False" >
+
+                <ribbon:Ribbon.Resources>
+                    <!-- Application Menu -->
+                    <ribbon:RibbonCommand x:Key="CmdSaveAs" 
+                                          LabelTitle="Save As" 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdSaveAsHTML" 
+                                          LabelTitle="Web Page (.html)" 
+                                          LabelDescription="Save the contents of the current window as an HTML document."
+                                          Executed="RibbonCommandSaveAsHTML_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdSaveAsTXT" 
+                                          LabelTitle="Text Document (.txt)" 
+                                          LabelDescription="Save the contents of the current window as a plain text document."
+                                          Executed="RibbonCommandSaveAsTXT_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdExport" 
+                                          LabelTitle="Export" 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdExportStructure" 
+                                          LabelTitle="Structure Only" 
+                                          LabelDescription="Under the folder that is the focus of this window, export the subfolder hierarchy for use elsewhere."
+                                          Executed="RibbonCommandExportStructure_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdExportStructureAndContent" 
+                                          LabelTitle="Structure and Content" 
+                                          LabelDescription="Under the folder that is the focus of this window, export the subfolder copy everything – structure and content - for use elsewhere."
+                                          Executed="RibbonCommandExportStructureAndContent_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdExportLog" 
+                                          LabelTitle="Log" 
+                                          LabelDescription="Export the log file."
+                                          Executed="RibbonCommandExportLog_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdTools" 
+                                          LabelTitle="Options" 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdCreateJournal" 
+                                          LabelTitle="Create Journal Folder" 
+                                          LabelDescription="Create a Journal folder for current year or next year."
+                                          Executed="RibbonCommandCreateJournal_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdOptions" 
+                                          LabelTitle="Font and Size" 
+                                          LabelDescription="Change the font face and font size for the text that you see in Planz."
+                                          Executed="RibbonCommandOptions_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdHelp" 
+                                          LabelTitle="Help" 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdUserManual" 
+                                          LabelTitle="User Manual" 
+                                          LabelDescription="Read the online user manual."
+                                          Executed="RibbonCommandUserManual_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdFeedback" 
+                                          LabelTitle="Give Feedback or Report Bugs" 
+                                          LabelDescription="Give feedback or report bugs."
+                                          Executed="RibbonCommandFeedback_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdAbout" 
+                                          LabelTitle="About Planz" 
+                                          LabelDescription="About Planz."
+                                          Executed="RibbonCommandAbout_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdExit" 
+                                          LabelTitle="Exit" 
+                                          Executed="RibbonCommandExit_Executed" />
+                    <!-- Home -->
+                    <ribbon:RibbonCommand x:Key="CmdRefresh" 
+                                          LabelTitle="Refresh" LargeImageSource="Images/refresh.png" SmallImageSource="Images/refresh_small.png" 
+                                          ToolTipTitle="Refresh (F5)" ToolTipDescription="Refresh and update the associations displayed in the current window." 
+                                          Executed="RibbonCommandRefresh_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdExpand" 
+                                          LabelTitle="Expand" LargeImageSource="Images/tool_expand.png" 
+                                          ToolTipTitle="Expand" ToolTipDescription="Expand the current heading and show its content." 
+                                          Executed="RibbonCommandExpand_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdCollapse" 
+                                          LabelTitle="Collapse" LargeImageSource="Images/tool_collapse.png" 
+                                          ToolTipTitle="Collapse" ToolTipDescription="Collapse the current heading and hid its content." 
+                                          Executed="RibbonCommandCollapse_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdPromote" 
+                                          LabelTitle="Promote" LargeImageSource="Images/tool_promote.png" 
+                                          ToolTipTitle="Promote (Shift + Tab)" ToolTipDescription="Promote the current association to a higher level." 
+                                          Executed="RibbonCommandPromote_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdDemote" 
+                                          LabelTitle="Demote" LargeImageSource="Images/tool_demote.png" 
+                                          ToolTipTitle="Demote (Tab)" ToolTipDescription="Demote the current association to a lower level." 
+                                          Executed="RibbonCommandDemote_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdMoveUp" 
+                                          LabelTitle="Move Up" LargeImageSource="Images/tool_moveup.png" 
+                                          ToolTipTitle="Move Up (Ctrl + Up)" ToolTipDescription="Move the current association up within the outline." 
+                                          Executed="RibbonCommandMoveUp_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdMoveDown" 
+                                          LabelTitle="Move Down" LargeImageSource="Images/tool_movedown.png" 
+                                          ToolTipTitle="Move Down (Ctrl + Down)" ToolTipDescription="Move the current association down within the outline." 
+                                          Executed="RibbonCommandMoveDown_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdDelete" 
+                                          LabelTitle="Delete" LargeImageSource="Images/delete.png" 
+                                          ToolTipTitle="Delete" ToolTipDescription="Delete the current association." 
+                                          Executed="RibbonCommandDelete_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdSearch" 
+                                          LabelTitle="Find:" SmallImageSource="Images/search.png" 
+                                          ToolTipTitle="Search" ToolTipDescription="Search for associations within the current window." 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <!-- Insert -->
+                    <ribbon:RibbonCommand x:Key="CmdNewHeading" 
+                                          LabelTitle="Heading" LargeImageSource="Images/heading.png" SmallImageSource="Images/heading.png" 
+                                          ToolTipTitle="Insert New Heading" ToolTipDescription="Create a new heading." 
+                                          Executed="RibbonCommandNewHeading_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdNewNote" 
+                                          LabelTitle="Note" LargeImageSource="Images/note.png" SmallImageSource="Images/note.png" 
+                                          ToolTipTitle="Insert New Note" ToolTipDescription="Create a new note." 
+                                          Executed="RibbonCommandNewNote_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdNewTextDocument" 
+                                          LabelTitle="Text Document" LargeImageSource="Images/notepad.png" SmallImageSource="Images/notepad.png" 
+                                          ToolTipTitle="Insert Text Document" ToolTipDescription="Create a new text document." 
+                                          Executed="RibbonCommandNewTextDocument_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdNewWord" 
+                                          LabelTitle="Word Document" LargeImageSource="Images/word.png" SmallImageSource="Images/word.png" 
+                                          ToolTipTitle="Insert Word Document" ToolTipDescription="Create a new Word document." 
+                                          Executed="RibbonCommandNewWord_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdNewExcel" 
+                                          LabelTitle="Excel Spreadsheet" LargeImageSource="Images/excel.png" SmallImageSource="Images/excel.png" 
+                                          ToolTipTitle="Insert Excel Spreadsheet" ToolTipDescription="Create a new Excel spreadsheet." 
+                                          Executed="RibbonCommandNewExcel_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdNewPowerPoint" 
+                                          LabelTitle="PowerPoint Presentation" LargeImageSource="Images/ppt.png" SmallImageSource="Images/ppt.png" 
+                                          ToolTipTitle="Insert PowerPoint Presentation" ToolTipDescription="Create a new PowerPoint presentation." 
+                                          Executed="RibbonCommandNewPowerPoint_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdNewOneNote" 
+                                          LabelTitle="OneNote Section" LargeImageSource="Images/onenote.png" SmallImageSource="Images/onenote.png" 
+                                          ToolTipTitle="Insert OneNote Section" ToolTipDescription="Create a new OneNote section." 
+                                          Executed="RibbonCommandNewOneNote_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdNewEmail" 
+                                          LabelTitle="Outlook Email" LargeImageSource="Images/outlook.png" SmallImageSource="Images/outlook.png" 
+                                          ToolTipTitle="Insert Outlook Email" ToolTipDescription="Create a new Outlook Email message." 
+                                          Executed="RibbonCommandNewEmail_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdNewTwitter" 
+                                          LabelTitle="Twitter Tweet" LargeImageSource="Images/twitter.png" SmallImageSource="Images/twitter.png" 
+                                          ToolTipTitle="Insert Twitter Tweet" ToolTipDescription="Create a new Twitter tweet." 
+                                          Executed="RibbonCommandNewTwitter_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdLinkToActiveItem" 
+                                          LabelTitle="Active Item" LargeImageSource="Images/activeitem.png" 
+                                          ToolTipTitle="Insert Active Item" ToolTipDescription="Link to the selected item." 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdLinkToFile" 
+                                          LabelTitle="File" LargeImageSource="Images/file.png" 
+                                          ToolTipTitle="Insert File..." ToolTipDescription="Link to a selected file." 
+                                          Executed="RibbonCommandLinkToFile_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdLinkToFolder" 
+                                          LabelTitle="Folder" LargeImageSource="Images/folder.png" 
+                                          ToolTipTitle="Insert Folder..." ToolTipDescription="Link to a selected folder." 
+                                          Executed="RibbonCommandLinkToFolder_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdLabelWith" 
+                                          LabelTitle="Label With" LargeImageSource="Images/labelwith.png" 
+                                          ToolTipTitle="Label with..." ToolTipDescription="Point to the current heading from a selected folder." 
+                                          Executed="RibbonCommandLabelWith_Executed" />
+                    <!-- Review -->
+                    <ribbon:RibbonCommand x:Key="CmdSpellCheck" 
+                                          LabelTitle="Spell Check" LargeImageSource="Images/spellcheck.png" 
+                                          ToolTipTitle="Spelling" ToolTipDescription="Check the spelling of text in your plans." 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdFlag" 
+                                          LabelTitle="Flag as to-do" SmallImageSource="Images/flag.gif" 
+                                          ToolTipTitle="Flag as To-do" ToolTipDescription="Flag the current association." 
+                                          Executed="RibbonCommandFlag_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdCheck" 
+                                          LabelTitle="Check as completed" SmallImageSource="Images/check.gif" 
+                                          ToolTipTitle="Check as Completed" ToolTipDescription="Check the current association." 
+                                          Executed="RibbonCommandCheck_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdUncheck" 
+                                          LabelTitle="Reset" SmallImageSource="Images/normal.gif" 
+                                          ToolTipTitle="Reset" ToolTipDescription="Reset the status of current association from flag or check to normal." 
+                                          Executed="RibbonCommandReset_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdPowerDPrevious" 
+                                          LabelTitle="Previous" 
+                                          ToolTipTitle="Navigate to Previous" ToolTipDescription="Previous Association. Move to the association above the current associaiton so that you can mark as done, defer, delegate or delete." 
+                                          Executed="RibbonCommandPowerDPrevious_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdPowerDNext" 
+                                          LabelTitle="Next"
+                                          ToolTipTitle="Navigate to Next" ToolTipDescription="Next Association. Move to the association below the current association so that you can mark as done, defer, delegate or delete." 
+                                          Executed="RibbonCommandPowerDNext_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdPowerDDone" 
+                                          LabelTitle="Done" LargeImageSource="Images/powerd_done.png" 
+                                          ToolTipTitle="Done" ToolTipDescription="Mark as 'done' the current association." 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdPowerDDefer" 
+                                          LabelTitle="Defer" LargeImageSource="Images/powerd_defer.png" 
+                                          ToolTipTitle="Defer" ToolTipDescription="Defer the current association to a selected date. The association will reappear again (in blue) on this date."
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdPowerDDelegate" 
+                                          LabelTitle="Delegate" LargeImageSource="Images/powerd_delegate.png" 
+                                          ToolTipTitle="Delegate" ToolTipDescription="Delegate (move) the current association to another project." 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdPowerDDelete" 
+                                          LabelTitle="Delete" LargeImageSource="Images/powerd_delete.png" 
+                                           
+                                          Executed="RibbonCommandPowerDDelete_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdPowerDShowAssociationMarkedDone" 
+                                          LabelTitle="Marked as Done" 
+                                          ToolTipTitle="Show Associations Marked as Done" ToolTipDescription="Show associations within the current plan that have been marked as done." 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdPowerDShowAssociationMarkedDefer" 
+                                          LabelTitle="Marked as Deferred" 
+                                          ToolTipTitle="Show Associations Marked as Deferred" ToolTipDescription="Show associations within the current plan that have been marked as deferred." 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <!-- View -->
+                    <ribbon:RibbonCommand x:Key="CmdFontColor" 
+                                          LabelTitle="Font Color" LargeImageSource="Images/fontcolor.png" 
+                                          ToolTipTitle="Change Font Color" ToolTipDescription="Change the font color for the current association." 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdNavigationTree" 
+                                          LabelTitle="Navigation Tree" LargeImageSource="Images/navigationtree.png" 
+                                          ToolTipTitle="Navigation Panel" ToolTipDescription="Open the navigation panel, which allows you to navigate through a structural view of your plans." 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdOutline" 
+                                          LabelTitle="Outline" LargeImageSource="Images/outline.png" 
+                                          ToolTipTitle="Outline View" ToolTipDescription="Show the outline structure to the left of your headings and notes." 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdChangeFocus" 
+                                          LabelTitle="Change the Focus" LargeImageSource="Images/newwindow.png" 
+                                          ToolTipTitle="Change Focus" ToolTipDescription="Select a folder to be the new focus in the current Planz window." 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdNewWindow" 
+                                          LabelTitle="Open in New Window" LargeImageSource="Images/newwindow.png" 
+                                          ToolTipTitle="Open in New Window" ToolTipDescription="Select a folder to open in a new Planz window." 
+                                          Executed="RibbonCommandGeneral_Executed" />
+                    <ribbon:RibbonCommand x:Key="CmdExplore" 
+                                          LabelTitle="Open in Windows Explorer" LargeImageSource="Images/explore.png" 
+                                          ToolTipTitle="Explore" ToolTipDescription="View the current association in the Windows Explorer." 
+                                          Executed="RibbonCommandExplore_Executed" />
+                </ribbon:Ribbon.Resources>
+
+                <ribbon:Ribbon.QuickAccessToolBar>
+                    <ribbon:RibbonQuickAccessToolBar>
+                        <ribbon:RibbonButton Command="{StaticResource CmdRefresh}" Width="20" Height="20" />
+                    </ribbon:RibbonQuickAccessToolBar>
+                </ribbon:Ribbon.QuickAccessToolBar>
+
+                <ribbon:Ribbon.ApplicationMenu>
+                    <ribbon:RibbonApplicationMenu>
+                        <ribbon:RibbonApplicationMenuItem x:Name="MenuSaveAs" Command="{StaticResource CmdSaveAs}" >
+                            <ribbon:RibbonApplicationMenuItem x:Name="MenuSaveAsTXT" Command="{StaticResource CmdSaveAsTXT}" />
+                            <ribbon:RibbonApplicationMenuItem x:Name="MenuSaveAsHTML" Command="{StaticResource CmdSaveAsHTML}" />
+                        </ribbon:RibbonApplicationMenuItem>
+                        <ribbon:RibbonApplicationMenuItem x:Name="MenuExport" Command="{StaticResource CmdExport}" >
+                            <ribbon:RibbonApplicationMenuItem x:Name="MenuExportStructure" Command="{StaticResource CmdExportStructure}" />
+                            <ribbon:RibbonApplicationMenuItem x:Name="MenuExportStructureAndContent" Command="{StaticResource CmdExportStructureAndContent}" />
+                            <ribbon:RibbonApplicationMenuItem x:Name="MenuExportLog" Command="{StaticResource CmdExportLog}" />
+                        </ribbon:RibbonApplicationMenuItem>
+                        <ribbon:RibbonApplicationMenuItem x:Name="MenuTools" Command="{StaticResource CmdTools}" >
+                            <ribbon:RibbonApplicationMenuItem x:Name="MenuCreateJournal" Command="{StaticResource CmdCreateJournal}" />
+                            <ribbon:RibbonApplicationMenuItem x:Name="MenuOptions" Command="{StaticResource CmdOptions}" />
+                        </ribbon:RibbonApplicationMenuItem>
+                        <ribbon:RibbonApplicationMenuItem x:Name="MenuHelp" Command="{StaticResource CmdHelp}" >
+                            <ribbon:RibbonApplicationMenuItem x:Name="MenuUserManual" Command="{StaticResource CmdUserManual}" />
+                            <ribbon:RibbonApplicationMenuItem x:Name="MenuFeedback" Command="{StaticResource CmdFeedback}" />
+                            <ribbon:RibbonApplicationMenuItem x:Name="MenuAbout" Command="{StaticResource CmdAbout}" />
+                        </ribbon:RibbonApplicationMenuItem>
+                        <ribbon:RibbonApplicationMenuItem x:Name="MenuExit" Command="{StaticResource CmdExit}" />
+                    </ribbon:RibbonApplicationMenu>
+                </ribbon:Ribbon.ApplicationMenu>
+                
+                <ribbon:RibbonTab Label="Home" Name="RibbonTabHome">
+                    <ribbon:RibbonGroup>
+                        <ribbon:RibbonGroup.Command>
+                            <ribbon:RibbonCommand LabelTitle="Outline" />
+                        </ribbon:RibbonGroup.Command>
+                        <ribbon:RibbonButton Command="{StaticResource CmdRefresh}" />
+                        <ribbon:RibbonSeparator />
+                        <ribbon:RibbonButton Command="{StaticResource CmdExpand}" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdCollapse}" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdPromote}" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdDemote}" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdMoveUp}" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdMoveDown}" />
+                        <ribbon:RibbonSeparator />
+                        <ribbon:RibbonButton Command="{StaticResource CmdDelete}" />
+                    </ribbon:RibbonGroup>
+                    <ribbon:RibbonGroup >
+                        <ribbon:RibbonGroup.Command>
+                            <ribbon:RibbonCommand LabelTitle="Search" />
+                        </ribbon:RibbonGroup.Command>
+                        <ribbon:RibbonTextBox x:Name="RibbonSearchBox" Command="{StaticResource CmdSearch}" KeyDown="RibbonSearchBox_KeyDown" />
+                        <ribbon:RibbonLabel x:Name="RibbonSearchStatus" Content=""/>
+                        <!--<ribbon:RibbonControlGroup>
+                            <ribbon:RibbonButton BorderThickness="0" Height="20" Width="75" x:Name="RibbonSearchPrevious" />
+                            <ribbon:RibbonButton BorderThickness="0" Height="20" Width="55" x:Name="RibbonSearchNext" />
+                        </ribbon:RibbonControlGroup>-->
+                    </ribbon:RibbonGroup>
+                </ribbon:RibbonTab>
+                <ribbon:RibbonTab Label="Insert" Name="RibbonTabInsert">
+                    <ribbon:RibbonGroup>
+                        <ribbon:RibbonGroup.Command>
+                            <ribbon:RibbonCommand LabelTitle="Create New..." />
+                        </ribbon:RibbonGroup.Command>
+                        <ribbon:RibbonButton Command="{StaticResource CmdNewHeading}" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdNewNote}" />
+                        <ribbon:RibbonSeparator />
+                        <ribbon:RibbonButton Command="{StaticResource CmdNewTextDocument}" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdNewWord}" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdNewExcel}" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdNewPowerPoint}" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdNewOneNote}" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdNewEmail}" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdNewTwitter}" />
+                    </ribbon:RibbonGroup>
+                    <ribbon:RibbonGroup>
+                        <ribbon:RibbonGroup.Command>
+                            <ribbon:RibbonCommand LabelTitle="Link To..." />
+                        </ribbon:RibbonGroup.Command>
+                        <ribbon:RibbonDropDownButton x:Name="RibbonDropDownButton_ActiveItemList" Command="{StaticResource CmdLinkToActiveItem}" PreviewMouseDown="RibbonDropDownButton_ActiveItemList_PreviewMouseDown" >
+                            <MenuItem Header="New Active Item" />
+                        </ribbon:RibbonDropDownButton>
+                        <ribbon:RibbonButton Command="{StaticResource CmdLinkToFile}" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdLinkToFolder}" />
+                    </ribbon:RibbonGroup>
+                    <ribbon:RibbonGroup>
+                        <ribbon:RibbonGroup.Command>
+                            <ribbon:RibbonCommand LabelTitle="Label With..." />
+                        </ribbon:RibbonGroup.Command>
+                        <ribbon:RibbonButton Command="{StaticResource CmdLabelWith}" />
+                    </ribbon:RibbonGroup>
+                </ribbon:RibbonTab>
+                <ribbon:RibbonTab Label="Review" Name="RibbonTabReview">
+                    <ribbon:RibbonGroup>
+                        <ribbon:RibbonGroup.Command>
+                            <ribbon:RibbonCommand LabelTitle="Proofing" />
+                        </ribbon:RibbonGroup.Command>
+                        <ribbon:RibbonToggleButton Command="{StaticResource CmdSpellCheck}" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=IsSpellCheckEnabled}" Checked="RibbonSpellCheck_Checked" Unchecked="RibbonSpellCheck_Unchecked" />
+                    </ribbon:RibbonGroup>
+                    <ribbon:RibbonGroup>
+                        <ribbon:RibbonGroup.Command>
+                            <ribbon:RibbonCommand LabelTitle="Tasks" />
+                        </ribbon:RibbonGroup.Command>
+                        <ribbon:RibbonGroup.GroupSizeDefinitions>
+                            <ribbon:RibbonGroupSizeDefinitionCollection>
+                                <ribbon:RibbonGroupSizeDefinition>
+                                    <ribbon:RibbonControlSizeDefinition ImageSize="Small" />
+                                    <ribbon:RibbonControlSizeDefinition ImageSize="Small" />
+                                    <ribbon:RibbonControlSizeDefinition ImageSize="Small" />
+                                </ribbon:RibbonGroupSizeDefinition>
+                            </ribbon:RibbonGroupSizeDefinitionCollection>
+                        </ribbon:RibbonGroup.GroupSizeDefinitions>
+                        <ribbon:RibbonButton Command="{StaticResource CmdFlag}" Width="130" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdCheck}" Width="130" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdUncheck}" Width="130" />
+                    </ribbon:RibbonGroup>
+                    <ribbon:RibbonGroup>
+                        <ribbon:RibbonGroup.Command>
+                            <ribbon:RibbonCommand LabelTitle="PowerD Review" />
+                        </ribbon:RibbonGroup.Command>
+                        <ribbon:RibbonGroup.GroupSizeDefinitions>
+                            <ribbon:RibbonGroupSizeDefinitionCollection>
+                                <ribbon:RibbonGroupSizeDefinition>
+                                    <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsImageVisible="False" />
+                                    <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsImageVisible="False" />
+                                    <ribbon:RibbonControlSizeDefinition ImageSize="Large" />
+                                    <ribbon:RibbonControlSizeDefinition ImageSize="Large" />
+                                    <ribbon:RibbonControlSizeDefinition ImageSize="Large" />
+                                    <ribbon:RibbonControlSizeDefinition ImageSize="Large" />
+                                    <ribbon:RibbonControlSizeDefinition ImageSize="Small" />
+                                    <ribbon:RibbonControlSizeDefinition ImageSize="Small" />
+                                    <ribbon:RibbonControlSizeDefinition ImageSize="Small" />
+                                </ribbon:RibbonGroupSizeDefinition>
+                            </ribbon:RibbonGroupSizeDefinitionCollection>
+                        </ribbon:RibbonGroup.GroupSizeDefinitions>
+                        <ribbon:RibbonButton Command="{StaticResource CmdPowerDPrevious}" Width="70" Margin="0, 10, 0, 0" />
+                        <ribbon:RibbonButton Command="{StaticResource CmdPowerDNext}" Width="70" />
+                        <ribbon:RibbonSplitButton x:Name="RibbonButton_PowerDDone" Command="{StaticResource CmdPowerDDone}" 
+                                                  Click="RibbonButton_PowerDDone_Click" MouseEnter="RibbonButton_PowerDDone_MouseEnter" >
+                            <ribbon:RibbonSplitButton.Items>
+                                <MenuItem Header="Today" IsCheckable="True" IsChecked="True" Click="RibbonButton_PowerDDoneMenuItem_Click" />
+                                <MenuItem Header="Yesterday" IsCheckable="True" IsChecked="False" Click="RibbonButton_PowerDDoneMenuItem_Click" />
+                                <MenuItem Header="Earlier..." IsCheckable="True" IsChecked="False" Click="RibbonButton_PowerDDoneMenuItem_Click" >
+                                </MenuItem>
+                            </ribbon:RibbonSplitButton.Items>
+                        </ribbon:RibbonSplitButton>
+                        <ribbon:RibbonSplitButton x:Name="RibbonButton_PowerDDefer" Command="{StaticResource CmdPowerDDefer}" 
+                                                  Click="RibbonButton_PowerDDefer_Click" MouseEnter="RibbonButton_PowerDDefer_MouseEnter">
+                            <ribbon:RibbonSplitButton.Items>
+                                <MenuItem Header="Tomorrow" IsCheckable="True" IsChecked="True" Click="RibbonButton_PowerDDeferMenuItem_Click" />
+                                <MenuItem Header="The day after tomorrow" IsCheckable="True" IsChecked="False" Click="RibbonButton_PowerDDeferMenuItem_Click" />
+                                <MenuItem Header="Later..." IsCheckable="True" IsChecked="False" Click="RibbonButton_PowerDDeferMenuItem_Click" >
+                                </MenuItem>
+                            </ribbon:RibbonSplitButton.Items>
+                        </ribbon:RibbonSplitButton>
+                        <ribbon:RibbonSplitButton x:Name="RibbonButton_PowerDDelegate" Command="{StaticResource CmdPowerDDelegate}" 
+                                                  Click="RibbonButton_PowerDDelegate_Click" 
+                                                  PreviewMouseDown="RibbonButton_PowerDDelegate_PreviewMouseDown" >
+                            <ribbon:RibbonSplitButton.Items>
+                                <MenuItem Header="Select a project or task..." />
+                            </ribbon:RibbonSplitButton.Items>
+                        </ribbon:RibbonSplitButton>
+                        <ribbon:RibbonButton x:Name="RibbonButton_PowerDDelete" Command="{StaticResource CmdPowerDDelete}" />
+                        <ribbon:RibbonLabel x:Name="RibbonPowerDOptions" Content="Show associations within this plan:" Margin="5, 0, 0, 0" />
+                        <ribbon:RibbonCheckBox x:Name="RibbonPowerDOption_ShowAssociationMarkedDone" Command="{StaticResource CmdPowerDShowAssociationMarkedDone}" Margin="5, 0, 0, 0" Checked="RibbonPowerDOption_ShowAssociationMarkedDone_Checked" Unchecked="RibbonPowerDOption_ShowAssociationMarkedDone_Unchecked" />
+                        <ribbon:RibbonCheckBox x:Name="RibbonPowerDOption_ShowAssociationMarkedDefer" Command="{StaticResource CmdPowerDShowAssociationMarkedDefer}" Margin="5, 0, 0, 0" Checked="RibbonPowerDOption_ShowAssociationMarkedDefer_Checked" Unchecked="RibbonPowerDOption_ShowAssociationMarkedDefer_Unchecked" />
+                    </ribbon:RibbonGroup>
+                </ribbon:RibbonTab>
+                <ribbon:RibbonTab Label="View" Name="RibbonTabView">
+                    <ribbon:RibbonGroup>
+                        <ribbon:RibbonGroup.Command>
+                            <ribbon:RibbonCommand LabelTitle="Font" />
+                        </ribbon:RibbonGroup.Command>
+                        <ribbon:RibbonDropDownButton Command="{StaticResource CmdFontColor}">
+                            <MenuItem Header="Black" Click="RibbonCommandFontColorClicked">
+                                <MenuItem.Icon>
+                                    <Image Source="Images/color_black.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Blue" Click="RibbonCommandFontColorClicked">
+                                <MenuItem.Icon>
+                                    <Image Source="Images/color_blue.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="DarkBlue" Click="RibbonCommandFontColorClicked">
+                                <MenuItem.Icon>
+                                    <Image Source="Images/color_darkblue.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="BlueViolet" Click="RibbonCommandFontColorClicked">
+                                <MenuItem.Icon>
+                                    <Image Source="Images/color_blueviolet.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Green" Click="RibbonCommandFontColorClicked">
+                                <MenuItem.Icon>
+                                    <Image Source="Images/color_green.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Red" Click="RibbonCommandFontColorClicked">
+                                <MenuItem.Icon>
+                                    <Image Source="Images/color_red.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Magenta" Click="RibbonCommandFontColorClicked">
+                                <MenuItem.Icon>
+                                    <Image Source="Images/color_magenta.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ribbon:RibbonDropDownButton>
+                    </ribbon:RibbonGroup>
+                    <ribbon:RibbonGroup>
+                        <ribbon:RibbonGroup.Command>
+                            <ribbon:RibbonCommand LabelTitle="Show/Hide" />
+                        </ribbon:RibbonGroup.Command>
+                        <ribbon:RibbonToggleButton Command="{StaticResource CmdNavigationTree}" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=NavigationTabVisibility}" Checked="RibbonNavigationTab_Checked" Unchecked="RibbonNavigationTab_Unchecked" />
+                        <ribbon:RibbonToggleButton Margin="5, 0, 0, 0" Command="{StaticResource CmdOutline}" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=ShowOutline}" Checked="ShowOutline_Checked" Unchecked="ShowOutline_Unchecked" />
+                    </ribbon:RibbonGroup>
+                    <ribbon:RibbonGroup>
+                        <ribbon:RibbonGroup.Command>
+                            <ribbon:RibbonCommand LabelTitle="Change Focus..." />
+                        </ribbon:RibbonGroup.Command>
+                        <ribbon:RibbonSplitButton x:Name="RibbonButton_ChangeFocus" Command="{StaticResource CmdChangeFocus}" 
+                                                  Click="RibbonButton_ChangeFocus_Click" 
+                                                  PreviewMouseDown="RibbonButton_ChangeFocus_PreviewMouseDown" >
+                            <ribbon:RibbonSplitButton.Items>
+                                <MenuItem Header="Select a project or task..." />
+                            </ribbon:RibbonSplitButton.Items>
+                        </ribbon:RibbonSplitButton>
+                    </ribbon:RibbonGroup>
+                    <ribbon:RibbonGroup>
+                        <ribbon:RibbonGroup.Command>
+                            <ribbon:RibbonCommand LabelTitle="New Window..." />
+                        </ribbon:RibbonGroup.Command>
+                        <ribbon:RibbonSplitButton x:Name="RibbonButton_NewWindow" Command="{StaticResource CmdNewWindow}" 
+                                                  Click="RibbonButton_NewWindow_Click" 
+                                                  PreviewMouseDown="RibbonButton_NewWindow_PreviewMouseDown" >
+                            <ribbon:RibbonSplitButton.Items>
+                                <MenuItem Header="Select a project or task..." />
+                            </ribbon:RibbonSplitButton.Items>
+                        </ribbon:RibbonSplitButton>
+                    </ribbon:RibbonGroup>
+                </ribbon:RibbonTab>
+            </ribbon:Ribbon>
+
+            <Grid x:Name="GridRoot">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="NavigationColumn" Width="{Binding Source={x:Static p:Settings.Default}, Path=NavigationTabWidth}" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+            
+                <TreeView x:Name="NavigationTabList" Grid.Column="0"
+                    BorderThickness="0" Margin="0, 0, 10, 0" ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                    ItemTemplate="{StaticResource NavigationTreeViewItem}" IsTabStop="False" 
+                    TreeViewItem.Expanded="NavigationTreeViewItem_Expanded"
+                    TreeViewItem.Collapsed="NavigationTreeViewItem_Collapsed"
+                    SizeChanged="NavigationTabList_SizeChanged">
+                    <TreeView.Resources>
+                        <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource styleTreeViewItem2}"/>
+                    </TreeView.Resources>
+                </TreeView>
+                
+                <GridSplitter Width="5" BorderThickness="1" />
+
+                <TreeView x:Name="Plan" Grid.Column="1"
+                        BorderThickness="0" FontSize="12" AllowDrop="True" Margin="5, 0, 0, 0"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                        Loaded="Plan_Loaded"
+                        ItemTemplate="{StaticResource ElementStructure}" IsTabStop="False"
+                        TreeViewItem.Expanded="PlanTreeViewItem_Expanded"
+                        TreeViewItem.Collapsed="PlanTreeViewItem_Collapsed"
+                        MouseLeave="PlanTreeView_MouseLeave"
+                        >
+                    <TreeView.Resources>
+                        <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource styleTreeViewItem1}"/>
+                    </TreeView.Resources>
+                </TreeView>
+            </Grid>
+            
+        </DockPanel>
+    </Grid>
+</Window>
